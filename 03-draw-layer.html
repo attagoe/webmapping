@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 2 - base layers</title>
+
+    <!-- leaflet -->
+    <link rel="stylesheet" href="library/leaflet/leaflet.css">
+    <script src="library/leaflet/leaflet.js"></script>
+
+    <!-- jquery -->
+    <script src="library/jquery/jquery.js"></script>
+
+    <!-- leaflet draw -->
+    <link rel="stylesheet" href="library/leaflet.draw/leaflet.draw.css">
+    <script src="library/leaflet.draw/leaflet.draw.js"></script>
+
+    <script src="js/draw-options.js"></script>
+</head>
+
+<body>
+
+<div id="map" style="width: 900px; height: 500px;"></div>
+<hr/>
+<button id="btn-output" type="button" class="btn btn-outline-dark btn-lg btn-block float-end">Output As GeoJSON</button>
+<br><br>
+<div id="output" class="bg-light p-5 rounded" style="height: 500px"></div>
+<script>
+	let map = L.map("map");
+	map.setView([6.676713010363707, -1.5739203176041785], 15);
+	let googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
+		maxZoom: 20,
+		subdomains:['mt0','mt1','mt2','mt3']
+	});
+	googleSat.addTo(map);
+
+	//create a feature group for storing draw vector objects
+	let drawLayer = L.featureGroup();
+	drawLayer.addTo(map);
+
+	let baseLayers = {
+		"Base Layer": googleSat,
+	};
+
+
+	let overalays = {
+		"Draw Layer": drawLayer,
+	};
+
+	//layer control
+	let layerControl = L.control.layers(baseLayers, overalays)
+	layerControl.addTo(map);
+
+
+	//draw control options
+	let drawControlOptions = getDrawControlOpts(drawLayer)
+
+	//draw control
+	let drawControl = new L.Control.Draw(drawControlOptions);
+
+	//add draw control to the map
+	drawControl.addTo(map);
+
+	//handle this even
+	map.on(L.Draw.Event.CREATED, function(event) {
+		drawLayer.addLayer(event.layer);
+	})
+
+
+	$("#btn-output").click(function() {
+		let output = document.getElementById("output");
+		$("#output").text(JSON.stringify(drawLayer.toGeoJSON()));
+	});
+</script>
+
+</body>
+</html>

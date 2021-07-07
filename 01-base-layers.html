@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 2 - base layers</title>
+
+    <!-- leaflet -->
+    <link rel="stylesheet" href="library/leaflet/leaflet.css">
+    <script src="library/leaflet/leaflet.js"></script>
+
+    <!-- leaflet draw -->
+    <link rel="stylesheet" href="library/leaflet.draw/leaflet.draw.css">
+    <script src="library/leaflet.draw/leaflet.draw.js"></script>
+</head>
+
+<body>
+
+<div id="map" style="width: 900px; height: 500px;"></div>
+<script>
+	let map = L.map("map");
+	map.setView([8, -1], 5);
+	//Adding Google Streets
+	let googleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+		maxZoom: 20,
+		subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+	});
+	googleStreets.addTo(map);
+	
+	//Adding Google Hybrid
+	let googleHybrid = L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',{
+    maxZoom: 20,
+    subdomains:['mt0','mt1','mt2','mt3']
+	});
+	googleHybrid.addTo(map);
+
+	//Adding Google Satellite
+	let googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
+    maxZoom: 20,
+    subdomains:['mt0','mt1','mt2','mt3']
+	});
+	googleSat.addTo(map);
+
+	//Adding Google Terrain
+	let googleTerrain = L.tileLayer('http://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}',{
+    maxZoom: 20,
+    subdomains:['mt0','mt1','mt2','mt3']
+	});
+	googleTerrain.addTo(map);
+
+	let baseLayers = {
+		"Google Streets": googleStreets,
+		"Google Hybrid": googleHybrid,
+		"Google Satellite": googleSat,
+		"Google Terrain": googleTerrain,
+	};
+
+	//layer control
+	let layerControl = L.control.layers(baseLayers, null, {position: "topright", collapsed: true})
+	layerControl.addTo(map);
+</script>
+
+</body>
+</html>

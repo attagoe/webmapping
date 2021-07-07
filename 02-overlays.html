@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 2 - base layers</title>
+
+    <!-- leaflet -->
+    <link rel="stylesheet" href="library/leaflet/leaflet.css">
+    <script src="library/leaflet/leaflet.js"></script>
+
+    <!-- leaflet draw -->
+    <link rel="stylesheet" href="library/leaflet.draw/leaflet.draw.css">
+    <script src="library/leaflet.draw/leaflet.draw.js"></script>
+
+    <!-- knust route-->
+    <script src="js/route.js"></script>
+    <script src="js/buildings.js"></script>
+</head>
+
+<body>
+
+<div id="map" style="width: 900px; height: 500px;"></div>
+<script>
+	let map = L.map("map");
+	map.setView([6.676713010363707, -1.5739203176041785], 15);
+	let googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
+		maxZoom: 20,
+		subdomains:['mt0','mt1','mt2','mt3']
+	});
+	googleSat.addTo(map);
+
+	//route geojson layer
+	let routeJSONLayer = L.geoJSON(knustRoute, {
+		style: {
+			color: "#c45aff",
+			weight: 3,
+			dashArray: "5 5",
+		},
+		onEachFeature: routePopupHandler
+
+	});
+	routeJSONLayer.addTo(map);
+
+	//buildings geojson layer
+	let buildingsJSONLayer = L.geoJSON(knustBuildings, {
+		style: {
+			color: "#f47a05",
+			weight: 5,
+		},
+		onEachFeature: buildingsPopupHandler
+	});
+	buildingsJSONLayer.addTo(map);
+	//jsonLayer.addData(knustRoute);
+
+
+	let baseLayers = {
+		"Google Satellite": googleSat,
+	};
+
+
+	let overalays = {
+		"KNUST Route": routeJSONLayer,
+		"Buildings": buildingsJSONLayer,
+	};
+
+
+	//layer control
+	let layerControl = L.control.layers(baseLayers, overalays, {position: "topright", collapsed: true})
+	layerControl.addTo(map);
+
+	function routePopupHandler(feature, layer) {
+		let message = `<div style="text-align: center">
+                            <h3>KNUST Route</h3>
+                        </div></br>
+                     <a href="https://www.knust.edu.gh/">  <img src="imgs/gate.jpg" width="300px"/> </a>`;
+		layer.bindPopup(message);
+	}
+
+	function buildingsPopupHandler(feature, layer){
+		//layer.bindPopup(feature.properties.name);
+
+		/*let message = `<div style="text-align: center">
+                            <h3>{feature.properties.name}</h3>
+                        </div></br>
+                     <a href="##">  <img src=`./imgs/${feature.properties.image}` width="300px"/> </a>`;
+        layer.bindPopup(message);*/
+        console.log(feature);
+                     
+    }
+
+</script>
+
+</body>
+</html>
